@@ -10,6 +10,8 @@ import { FooterComponent } from './components/footer/footer.component';
 import { MoodSubmissionComponent } from './components/mood-submission/mood-submission.component';
 import { TeamMoodComponent } from './components/team-mood/team-mood.component';
 import { HomeComponent } from './components/home/home.component';
+import { UserService } from './services/user.service';
+import { MoodService } from './services/mood.service';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,10 @@ import { HomeComponent } from './components/home/home.component';
     ReactiveFormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    UserService,
+    MoodService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

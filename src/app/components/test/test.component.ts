@@ -14,19 +14,19 @@ import { UserService } from '../services/user.service';
       <div style="margin-top: 20px; padding: 15px; background-color: #e0e0e0; border-radius: 5px;">
         <h3>Current User ID</h3>
         <p>Current value in cookie: <strong>{{ currentUserId || 'None' }}</strong></p>
-        <p>This ID remains the same until you close and reopen the application or manually reset it.</p>
+        <p>Note: This ID will change each time you make an API call.</p>
         
         <div style="margin-top: 15px;">
           <button 
             (click)="regenerateUserId()"
             style="padding: 8px 16px; background-color: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-            Reset User ID
+            Generate New ID
           </button>
           
           <button 
-            (click)="refreshUserId()"
-            style="padding: 8px 16px; background-color: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">
-            Refresh Display
+            (click)="clearUserId()"
+            style="padding: 8px 16px; background-color: #dc3545; color: white; border: none; border-radius: 4px; cursor: pointer;">
+            Clear User ID
           </button>
         </div>
       </div>
@@ -44,12 +44,16 @@ export class TestComponent implements OnInit {
   }
 
   regenerateUserId(): void {
-    // Clear existing ID and generate a new one
-    this.userService.clearUserId();
-    this.currentUserId = this.userService.getUserId();
+    this.userService.generateAndStoreUserId();
+    this.refreshUserId();
   }
 
-  refreshUserId(): void {
+  clearUserId(): void {
+    this.userService.clearUserId();
+    this.refreshUserId();
+  }
+
+  private refreshUserId(): void {
     this.currentUserId = this.userService.getCurrentUserId();
   }
 }

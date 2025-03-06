@@ -1,19 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, delay, tap } from 'rxjs/operators';
 import { MoodSubmission } from '../models/mood-submission';
 import { TeamMood } from '../models/team-mood';
 import { MoodType } from '../models/mood-type.enum';
 import { environment } from '../environments/environment';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MoodService {
   private apiUrl = environment.apiUrl + '/mood';
+  private userId: string;
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    private userService: UserService
+  ) {
+    // Get the user ID once when the service is initialized
+    // This ensures the same ID is used across all API calls in this session
+    this.userId = this.userService.getUserId();
+    console.log('MoodService initialized with user ID:', this.userId);
+  }
 
   // Get all available mood types with their human-readable labels and scores
   getMoodOptions(): { type: MoodType, label: string, score: number }[] {
@@ -26,9 +36,22 @@ export class MoodService {
     ];
   }
 
+  // Get the headers with user ID
+  private getHeaders(): HttpHeaders {
+    console.log('Using user ID for API call:', this.userId);
+    
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'X-User-Id': this.userId
+    });
+  }
+
   // Submit a mood
   submitMood(submission: MoodSubmission): Observable<void> {
-    return this.http.post<void>(this.apiUrl, submission)
+    const headers = this.getHeaders();
+    console.log('Submitting mood with user ID:', this.userId);
+    
+    return this.http.post<void>(this.apiUrl, submission, { headers })
       .pipe(
         catchError(this.handleError)
       );
@@ -36,7 +59,10 @@ export class MoodService {
 
   // Get the overall team mood
   getOverallMood(): Observable<TeamMood> {
-    return this.http.get<TeamMood>(`${this.apiUrl}/overall`)
+    const headers = this.getHeaders();
+    console.log('Getting team mood with user ID:', this.userId);
+    
+    return this.http.get<TeamMood>(`${this.apiUrl}/overall`, { headers })
       .pipe(
         catchError(this.handleError)
       );
@@ -66,6 +92,9 @@ export class MoodService {
   }
 
   isApiAvailable(): Observable<boolean> {
+    // Already have a user ID from constructor
+    console.log('API availability check with user ID:', this.userId);
+    
     return of(true).pipe(
       delay(500),
       tap(() => console.log('API check completed'))
