@@ -8,7 +8,7 @@
     </div>
     
     <div *ngIf="error" class="alert alert-danger">
-      {{ error }}
+      Sorry, you have already submitted your response for today, try again tomorrow!
     </div>
     
     <form [formGroup]="moodForm" (ngSubmit)="onSubmit()">
