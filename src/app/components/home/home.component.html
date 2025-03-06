@@ -1,0 +1,20 @@
+<div class="home-container">
+    <div class="welcome-section">
+      <h1>Welcome to Mood Tracker</h1>
+      <p>Track your team's mood and see how everyone is feeling today.</p>
+    </div>
+    
+    <div *ngIf="apiReady" class="content-section">
+      <div class="section">
+        <app-mood-submission></app-mood-submission>
+      </div>
+      
+      <div class="section">
+        <app-team-mood></app-team-mood>
+      </div>
+    </div>
+    
+    <div *ngIf="!apiReady" class="loading-section">
+      <p>Loading application... Please make sure the backend server is running.</p>
+    </div>
+  </div>

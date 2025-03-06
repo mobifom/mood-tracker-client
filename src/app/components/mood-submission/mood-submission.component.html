@@ -1,0 +1,49 @@
+<p>mood-submission works!</p>
+<!-- src/app/components/mood-submission/mood-submission.component.html -->
+<div class="submission-container">
+    <h2>How are you feeling today?</h2>
+    
+    <div *ngIf="success" class="alert alert-success">
+      Thank you for sharing your mood today!
+    </div>
+    
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+    
+    <form [formGroup]="moodForm" (ngSubmit)="onSubmit()">
+      <div class="form-group mood-options">
+        <label>Select your mood:</label>
+        <div class="mood-buttons">
+          <div *ngFor="let option of moodOptions" class="mood-option">
+            <button 
+              type="button" 
+              [class.selected]="moodForm.get('mood')?.value === option.type"
+              (click)="moodForm.get('mood')?.setValue(option.type)"
+              class="mood-button">
+              <div class="mood-label">{{ option.label }}</div>
+            </button>
+          </div>
+        </div>
+        <div *ngIf="submitted && moodForm.get('mood')?.errors?.['required']" class="text-danger">
+          Please select a mood
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="comment">Any comments? (Optional)</label>
+        <textarea 
+          id="comment" 
+          formControlName="comment" 
+          class="form-control" 
+          rows="3" 
+          placeholder="Share how your day is going...">
+        </textarea>
+        <div *ngIf="moodForm.get('comment')?.errors?.['maxlength']" class="text-danger">
+          Comment cannot be longer than 350 characters
+        </div>
+      </div>
+      
+      <button type="submit" class="btn btn-primary" [disabled]="moodForm.invalid">Submit</button>
+    </form>
+  </div>
